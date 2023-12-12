@@ -96,6 +96,7 @@ app.put("/movies/:movieId/", async (request, response) => {
     director_Id= ${directorId},
     movie_Name = '${movieName}',
     lead_Actor = '${leadActor}';
+    
     `;
   await db.run(updateMovieQuery);
   response.send("Movie Details Updated");
@@ -145,14 +146,17 @@ app.get("/directors/:directorId/movies/", async (request, response) => {
   const { directorId } = request.params;
   const getDirectorMovieQuery = `
     SELECT movie_name
-    FROM director INNER JOIN movie 
+    FROM director INNER JOIN movie
     ON director.director_id = movie.director_id
     WHERE 
     director.director_id = ${directorId};
     `;
-  const movies = await db.all(getDirectorMovieQuery);
+  const directedMovies = await db.all(getDirectorMovieQuery);
+  console.log(directorId);
   response.send(
-    movies.map((moviesNames) => convertMovieNameToPascalCase(moviesNames))
+    directedMovies.map((moviesNames) =>
+      convertMovieNameToPascalCase(moviesNames)
+    )
   );
 });
 
